@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tangydust — Your Universe of Web Experiences</title>
+  <meta name="description" content="Tangydust is the home of premium web experiences. Discover our family of websites and apps, all in one place." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff9d2f'/%3E%3Cstop offset='1' stop-color='%23ff4d6d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230b0b12'/%3E%3Ctext x='50' y='50' font-family='Arial,Helvetica,sans-serif' font-size='56' font-weight='bold' fill='url(%23g)' text-anchor='middle' dominant-baseline='central'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-scene" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <a class="nav-brand" href="#/" aria-label="Tangydust home">
+      <span class="brand-mark">T</span>
+      <span class="brand-name">Tangydust</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#/" data-nav="home">Home</a>
+      <a href="#/#sites" data-nav="sites">Sites</a>
+      <a href="#/admin" data-nav="admin" class="admin-only hidden">Admin</a>
+    </nav>
+    <div class="nav-actions" id="navActions">
+      <button class="btn btn-ghost hidden" id="loginBtn">Sign in</button>
+      <div class="user-chip hidden" id="userChip">
+        <span class="user-avatar" id="userAvatar">A</span>
+        <span id="userName">admin</span>
+        <button class="chip-logout" id="logoutBtn" title="Sign out">⏻</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main view (rendered by JS) -->
+  <main id="view" class="view"></main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark small">T</span>
+        <span>Tangydust</span>
+      </div>
+      <p class="footer-tag">Crafted with care. One hub, many worlds.</p>
+      <p class="footer-copy">© <span id="year"></span> Tangydust. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Login modal -->
+  <div class="modal-backdrop hidden" id="loginModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Sign in">
+      <button class="modal-close" data-close="loginModal" aria-label="Close">✕</button>
+      <h2>Welcome back</h2>
+      <p class="modal-sub">Sign in to manage your sites. Not required for browsing.</p>
+      <form id="loginForm" autocomplete="off">
+        <label class="field">
+          <span>Username</span>
+          <input type="text" id="loginUser" placeholder="admin" required />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="loginPass" placeholder="••••••••" required />
+        </label>
+        <p class="form-error hidden" id="loginError">Invalid username or password.</p>
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Site editor modal (admin) -->
+  <div class="modal-backdrop hidden" id="editorModal">
+    <div class="modal modal-wide" role="dialog" aria-modal="true" aria-label="Edit site">
+      <button class="modal-close" data-close="editorModal" aria-label="Close">✕</button>
+      <h2 id="editorTitle">Add a new site</h2>
+      <form id="editorForm" autocomplete="off">
+        <div class="editor-grid">
+          <label class="field">
+            <span>Site name *</span>
+            <input type="text" id="fName" required placeholder="My Awesome Site" />
+          </label>
+          <label class="field">
+            <span>Tagline</span>
+            <input type="text" id="fTagline" placeholder="A short one-line description" />
+          </label>
+          <label class="field field-full">
+            <span>Website / referral link *</span>
+            <input type="url" id="fUrl" required placeholder="https://mysite.com/?ref=tangydust" />
+          </label>
+          <label class="field field-full">
+            <span>Description</span>
+            <textarea id="fDesc" rows="4" placeholder="What is this site about? What can visitors do there?"></textarea>
+          </label>
+          <label class="field">
+            <span>Accent color</span>
+            <input type="color" id="fAccent" value="#ff9d2f" />
+          </label>
+          <div class="field">
+            <span>Logo</span>
+            <div class="logo-row">
+              <div class="logo-preview" id="logoPreview">?</div>
+              <div class="logo-inputs">
+                <input type="text" id="fLogoUrl" placeholder="Paste logo image URL" />
+                <span class="or-label">or upload</span>
+                <input type="file" id="fLogoFile" accept="image/*" class="file-input" />
+              </div>
+            </div>
+          </div>
+          <div class="field field-full">
+            <span>Demo images</span>
+            <div class="img-add-row">
+              <input type="text" id="fImgUrl" placeholder="Paste image URL" />
+              <button type="button" class="btn btn-ghost" id="addImgUrlBtn">Add</button>
+              <input type="file" id="fImgFile" accept="image/*" multiple class="file-input" />
+            </div>
+            <div class="img-thumbs" id="imgThumbs"></div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-close="editorModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="editorSaveBtn">Save site</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm dialog -->
+  <div class="modal-backdrop hidden" id="confirmModal">
+    <div class="modal modal-sm" role="alertdialog" aria-modal="true">
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <p class="modal-sub" id="confirmMsg"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close="confirmModal">Cancel</button>
+        <button class="btn btn-danger" id="confirmOk">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox hidden" id="lightbox">
+    <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+    <img id="lbImg" alt="Demo screenshot" />
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+  <script src="js/defaults.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
